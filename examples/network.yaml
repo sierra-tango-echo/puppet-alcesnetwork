@@ -1,0 +1,43 @@
+---
+#WHICH NETWORK IS PRIMARY?
+alcesnetwork::primaryrole: 'private'
+#PRIVATE NETWORK
+domain: sfn.cluster
+alcesnetwork::private_network: "10.10.0.0"
+alcesnetwork::private_gateway: "10.10.0.1"
+alcesnetwork::private_netmask: "255.255.0.0"
+alcesnetwork::private_domain: "prv.%{hiera('domain')}"
+alcesnetwork::private_dhcp: false
+alcesnetwork::private_dns:
+ - '10.10.0.1'
+#MANAGEMENT NETWORK
+alcesnetwork::management_netmask: "255.255.0.0"
+alcesnetwork::management_network: "10.11.0.0"
+alcesnetwork::management_gateway: "10.11.0.1"
+alcesnetwork::management_domain: "mgt.%{hiera('domain')}"
+alcesnetwork::management_dhcp: false
+#BMC NETWORK
+alcesnetwork::bmc_netmask: %{management_netmask}
+alcesnetwork::bmc_network: %{management_network}
+alcesnetwork::bmc_gateway: %{management_gateway}
+alcesnetwork::bmc_domain: "bmc.%{hiera('management_domain')}"
+#INFINIBAND_NETWORK
+alcesnetwork::infiniband_netmask: "255.255.0.0"
+alcesnetwork::infiniband_network: "10.12.0.0"
+alcesnetwork::infiniband_gateway: "10.12.0.11"
+alcesnetwork::infiniband_domain: "ib.%{hiera('domain')}"
+#SECURE NETWORK
+alcesnetwork::secure_network: "10.13.0.0"
+alcesnetwork::secure_netmask: "255.255.0.0"
+alcesnetwork::secure_gateway: "10.13.0.1"
+alcesnetwork::secure_domain: "sec.%{hiera('domain')}"
+#CLIENT NETWORK
+alcesnetwork::client_network: "10.14.0.0"
+alcesnetwork::client_netmask: "255.255.0.0"
+alcesnetwork::client_gateway: "10.14.0.0"
+alcesnetwork::client_domain: "vpn.%{hiera('domain')}"
+#PUBLIC_NETWORK
+alcesnetwork::public_netmask: "255.255.0.0"
+alcesnetwork::public_network: "10.101.0.0"
+alcesnetwork::public_domain: "dmz.alces-software.com"
+alcesnetwork::public_gateway: "10.101.0.1"

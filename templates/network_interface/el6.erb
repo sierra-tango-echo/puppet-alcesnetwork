@@ -1,0 +1,70 @@
+<%
+netmask=scope.lookupvar("alcesnetwork::network::#{@role}_netmask")
+network=scope.lookupvar("alcesnetwork::network::#{@role}_network")
+domain=scope.lookupvar("alcesnetwork::network::#{@role}_domain")
+if scope.lookupvar("alcesnetwork::network::defaultgateway_role").to_s == @role
+  gateway=scope.lookupvar("alcesnetwork::network::#{@role}_gateway")
+end
+dns=scope.lookupvar("alcesnetwork::network::#{@role}_dns")
+mac=scope.lookupvar("alcesnetwork::network::#{@role}_mac") || scope.lookupvar("::macaddress_#{@interfacename}")
+vlan=!@interfacename.match(/\.\d*$/).to_s.empty?
+infiniband=!@interfacename.match(/^ib\d*$/).to_s.empty?
+if @bridge
+  iftype="Bridge"
+elsif infiniband
+  iftype="Infiniband"
+else
+  iftype="Ethernet"
+end
+-%>
+DEVICE=<%=@interfacename%>
+<%if mac && !@bond && !@bridge-%>
+HWADDR=<%=mac%>
+<%end-%>
+NM_CONTROLLED=no
+USERCTL=no
+DEVICETYPE=eth
+ONBOOT=<%if @role == 'bmc' %>no<%else%>yes<%end%>
+TYPE="<%=iftype%>"
+<% if @bond -%>
+BONDING_OPTS="mode=<%=(scope.function_hiera(["alcesnetwork::#{@interfacename}_type"])) rescue '6'%> <%=(scope.function_hiera(["alcesnetwork::#{@interfacename}_options"]) rescue nil)%>"
+<% end -%>
+<%if @bondslave-%>
+BOOTPROTO=none
+SLAVE=yes
+MASTER=<%=@role%>
+<%elsif @bridgeslave-%>
+BOOTPROTO=none
+BRIDGE="<%=@role%>"
+<%else-%>
+<%if infiniband -%>
+LINKDELAY=60
+<%end -%>
+<%unless @ip.to_s.empty? || netmask.nil? || @dhcp || @ip.to_s == 'undef' || netmask.to_s == 'undef' -%>
+BOOTPROTO=none
+NETMASK=<%=netmask%>
+IPADDR=<%=@ip%>
+<%if network-%>
+NETWORK=<%=network%>
+<%end-%>
+<%else-%>
+BOOTPROTO=dhcp
+<%end-%>
+<%unless dns.to_s.empty?-%>
+<%if dns.kind_of? Array -%>
+<%dns.each_index do |index|-%>
+DNS<%=index+1%>=<%=dns[index]%>
+<%end-%>
+<%elsif !dns.to_s.empty?-%>
+DNS1=<%=dns%>
+<%end-%>
+<%end-%>
+<%end-%>
+<%if vlan-%>
+VLAN=yes
+<%end-%>
+<%unless gateway.to_s.empty?-%>
+GATEWAY=<%=gateway%>
+<%else-%>
+PEERDNS=no
+<%end-%>

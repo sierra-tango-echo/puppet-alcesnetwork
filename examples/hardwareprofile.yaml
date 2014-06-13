@@ -1,0 +1,45 @@
+---
+alcesnetwork::networkinterfaces:
+ - em1
+ - em2
+ - p1p1
+ - p1p2
+ - p4p1
+ - p4p2
+ - bmc
+ - brpublic
+ - brmanagement
+ - brprivate
+ - bond0
+ - bond1
+ - ib0
+alcesnetwork::networkrole_bmc: bmc
+alcesnetwork::networkrole_ib0: infiniband
+alcesnetwork::defaultgateway_role: public
+alcesnetwork::networkrole_p1p1: bond1
+alcesnetwork::networkrole_p1p2: bond1
+alcesnetwork::networkrole_p4p1: bond0
+alcesnetwork::networkrole_p4p2: dhcp
+alcesnetwork::networkrole_em2: brmanagement
+alcesnetwork::networkrole_em1: bond0
+alcesnetwork::networkrole_brmanagement: management
+alcesnetwork::networkrole_brprivate: private
+alcesnetwork::networkrole_brpublic: public
+alcesnetwork::networkrole_bond0: brprivate
+alcesnetwork::networkrole_bond1: brpublic
+alcesnetwork::networkrole_bmc: bmc
+alcesnetwork::defaultgateway_role: public
+# BONDS
+alcesnetwork::bonds:
+ - bond0
+ - bond1
+# Options for bond0
+alcesnetwork::bond0_type: 1
+alcesnetwork::bond0_options: 'miimon=80 primary=p4p1'
+alcesnetwork::bond1_type: 1
+alcesnetwork::bond1_options: 'miimon=80'
+# BRIDGES
+alcesnetwork::bridges:
+ - brpublic
+ - brprivate
+ - brmanagement

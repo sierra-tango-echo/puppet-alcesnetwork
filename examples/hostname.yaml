@@ -1,0 +1,8 @@
+---
+alcesnetwork::private_ip: "10.199.0.11"
+alcesnetwork::bmc_ip: "10.199.64.111"
+alcesnetwork::infiniband_ip: "10.199.128.11"
+alcesnetwork::management_ip: "10.199.64.11"
+alcesnetwork::public_ip: "137.73.113.221"
+alcesnetwork::private_dhcp: false
+alcesnetwork::public_dhcp: false

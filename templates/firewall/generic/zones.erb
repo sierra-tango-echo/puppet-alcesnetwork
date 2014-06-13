@@ -1,0 +1,35 @@
+#
+# Shorewall version 4 - Zones File
+#
+# For information about this file, type "man shorewall-zones"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-zones.html
+#
+###############################################################################
+#ZONE	TYPE		OPTIONS		IN			OUT
+#					OPTIONS			OPTIONS
+fw	firewall
+#external zone
+ext	ipv4
+#private zone
+pri	ipv4
+#management zone
+man	ipv4
+#vpn zone
+vpn	ipv4
+#secure zone
+sec	ipv4
+<% unless @ib_interface.empty? -%>
+ib	ipv4
+<% end -%>
+<%if scope.lookupvar('alcesnetwork::role') == 'master'-%>
+#Support zone
+sup	ipv4
+<% end -%>
+<%scope.lookupvar('alcesnetwork::network::extra_networks').to_a.each do |network|-%>
+<%unless scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera(["alcesnetwork::networkrole_#{i}"]) rescue '') == network}.compact.to_s.empty?-%>
+<%=network[0..2]%>  ipv4
+<%end-%>
+<%end-%>
+#LAST LINE - ADD YOUR ENTRIES ABOVE THIS ONE - DO NOT REMOVE

@@ -1,0 +1,32 @@
+#
+# Shorewall version 4 - Interfaces File
+#
+# For information about entries in this file, type "man shorewall-interfaces"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-interfaces.html
+#
+###############################################################################
+#ZONE	INTERFACE	BROADCAST	OPTIONS
+<% unless @pub_interface.empty? -%>
+ext	<%= @pub_interface%>		detect		dhcp,tcpflags,logmartians,nosmurfs
+<% end -%>
+<% unless @pri_interface.empty? -%>
+pri	<%= @pri_interface%>	detect
+<% end -%>
+<% unless @man_interface.empty? -%>
+man	<%= @man_interface%>	detect
+<% end -%>
+<% unless @ib_interface.empty? -%>
+ib	<%= @ib_interface%> 	detect
+<% end -%>
+sec	tap0		detect		
+vpn	tun0		detect
+<%if scope.lookupvar('alcesnetwork::role') == 'master'-%>
+sup 	tun1		detect
+<% end -%>
+<%scope.lookupvar('alcesnetwork::network::extra_networks').to_a.each do |network|-%>
+<%interface=scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera(["alcesnetwork::networkrole_#{i}"]) rescue '') == network}.compact.first -%>
+<%unless interface.to_s.empty? %><%=network[0..2]%>    <%=interface %> detect  routeback<%end%>
+<%end-%>
+#LAST LINE -- ADD YOUR ENTRIES BEFORE THIS ONE -- DO NOT REMOVE

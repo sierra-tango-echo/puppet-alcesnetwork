@@ -1,0 +1,60 @@
+#
+# Shorewall version 4 - Policy File
+#
+# For information about entries in this file, type "man shorewall-policy"
+#
+# The manpage is also online at
+# http://www.shorewall.net/manpages/shorewall-policy.html
+#
+###############################################################################
+#SOURCE		DEST		POLICY		LOG		LIMIT:BURST
+#						LEVEL
+
+#allow outbound on the external interface
+$FW		ext		ACCEPT
+pri		ext		ACCEPT
+man		ext		ACCEPT
+
+#block all inbound on the external interface
+ext		$FW		DROP		info
+ext		all		DROP		info
+
+<%scope.lookupvar('alcesnetwork::network::extra_networks').to_a.each do |network|-%>
+<%unless scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera(["alcesnetwork::networkrole_#{i}"]) rescue '') == network}.compact.to_s.empty?-%>
+<%=network[0..2]%>		$FW		DROP		info
+<%=network[0..2]%>		all		DROP		info
+pri		<%=network[0..2]%>	ACCEPT
+$FW		<%=network[0..2]%>	ACCEPT
+<%end-%>
+<%end-%>
+
+#Allow vpn access to private
+vpn		$FW		ACCEPT
+sec		$FW		ACCEPT
+vpn		sec		ACCEPT
+$FW		vpn		ACCEPT
+$FW		sec		ACCEPT
+vpn		pri		ACCEPT
+sec             pri             ACCEPT
+pri		sec		ACCEPT
+
+#trust private and management networks
+pri		$FW		ACCEPT
+man		$FW		ACCEPT
+$FW		pri		ACCEPT
+$FW		man		ACCEPT
+
+<%unless @ib_interface.empty? -%>
+ib		$FW		ACCEPT
+$FW		ib		ACCEPT
+<%end-%>
+
+<%if scope.lookupvar('alcesnetwork::role') == 'master'-%>
+$FW		sup		ACCEPT
+sup		$FW		ACCEPT
+<% end-%>
+
+#reject everything else
+all		all		REJECT		info
+
+#LAST LINE -- DO NOT REMOVE
