@@ -1,0 +1,7 @@
+It's possible to create directories in here to override config values
+
+Order by:
+
+1) profile, eg hpc_headnode
+2) role, eg master
+3) Generic

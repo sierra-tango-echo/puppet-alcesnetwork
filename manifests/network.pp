@@ -94,8 +94,10 @@ class alcesnetwork::network (
   $primary_dhcp = inline_template("<%=scope.lookupvar(\"#{@primary_role}_dhcp\")%>")
   $primary_domain = inline_template("<%=scope.lookupvar(\"#{@primary_role}_domain\")%>")
   $primary_dns = inline_template("<%=scope.lookupvar(\"#{@primary_role}_dns\")%>")
+  $primary_interface = inline_template("<%=scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera([\"alcesnetwork::networkrole_#{i}\"]) rescue '') == scope.lookupvar('primary_role')}.compact.first%>")
 
   #NETWORK INTERFACES
+
   alcesnetwork::network_interface { $interfaces:
     require=>Service['NetworkManager']
   }
@@ -117,5 +119,13 @@ class alcesnetwork::network (
     group=>'root',
     content=>template('alcesnetwork/network/sysconfig-network.erb')
   }
+  file {'/etc/sysconfig/static-routes':
+      ensure=>present,
+      mode=>0644,
+      owner=>root,
+      group=>root,
+      content=>'',
+      replace=>no,
+   }
 
 }

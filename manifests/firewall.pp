@@ -31,8 +31,8 @@ class alcesnetwork::firewall (
       owner=>'root',
       group=>'root',
       content=> multitemplate (
-	  "alcesnetwork/firewall/$alcesnetwork::profile/hosts.erb",
-	  "alcesnetwork/firewall/generic/hosts.erb"),
+	  "alcesnetwork/dynamic/firewall/$alcesnetwork::profile/hosts.erb",
+	  "alcesnetwork/dynamic/firewall/generic/hosts.erb"),
       require=>Package['shorewall'],
     }
     file {'/etc/shorewall/interfaces':
@@ -41,8 +41,8 @@ class alcesnetwork::firewall (
       owner=>'root',
       group=>'root',
       content=> multitemplate(
-	"alcesnetwork/firewall/$alcesnetwork::profile/interfaces.erb",
-	"alcesnetwork/firewall/generic/interfaces.erb"),
+	"alcesnetwork/dynamic/firewall/$alcesnetwork::profile/interfaces.erb",
+	"alcesnetwork/dynamic/firewall/generic/interfaces.erb"),
       require=>Package['shorewall'],
     }
     file {'/etc/shorewall/masq':
@@ -51,8 +51,8 @@ class alcesnetwork::firewall (
       owner=>'root',
       group=>'root',
       content=>multitemplate(
-	"alcesnetwork/firewall/$alcesnetwork::profile/masq.erb",
-	"alcesnetwork/firewall/generic/masq.erb"),
+	"alcesnetwork/dynamic/firewall/$alcesnetwork::profile/masq.erb",
+	"alcesnetwork/dynamic/firewall/generic/masq.erb"),
       require=>Package['shorewall'],
     }
     file {'/etc/shorewall/policy':
@@ -61,8 +61,8 @@ class alcesnetwork::firewall (
       owner=>'root',
       group=>'root',
       content=>multitemplate(
-	"alcesnetwork/firewall/$alcesnetwork::profile/policy.erb",
-	"alcesnetwork/firewall/generic/policy.erb"),
+	"alcesnetwork/dynamic/firewall/$alcesnetwork::profile/policy.erb",
+	"alcesnetwork/dynamic/firewall/generic/policy.erb"),
       require=>Package['shorewall'],
     }
     file {'/etc/shorewall/rules':
@@ -71,8 +71,8 @@ class alcesnetwork::firewall (
       owner=>'root',
       group=>'root',
       content=>multitemplate(
-	"alcesnetwork/firewall/$alcesnetwork::profile/rules.erb",
-	"alcesnetwork/firewall/generic/rules.erb"),
+	"alcesnetwork/dynamic/firewall/$alcesnetwork::profile/rules.erb",
+	"alcesnetwork/dynamic/firewall/generic/rules.erb"),
       require=>Package['shorewall'],
     }
     file {'/etc/shorewall/shorewall.conf':
@@ -81,8 +81,8 @@ class alcesnetwork::firewall (
       owner=>'root',
       group=>'root',
       content=>multitemplate(
-	"alcesnetwork/firewall/$alcesnetwork::profile/shorewall.conf.erb",
-	"alcesnetwork/firewall/generic/shorewall.conf.erb"),
+	"alcesnetwork/dynamic/firewall/$alcesnetwork::profile/shorewall.conf.erb",
+	"alcesnetwork/dynamic/firewall/generic/shorewall.conf.erb"),
       require=>Package['shorewall'],
     }
     file {'/etc/shorewall/zones':
@@ -91,8 +91,8 @@ class alcesnetwork::firewall (
       owner=>'root',
       group=>'root',
       content=>multitemplate(
-	"alcesnetwork/firewall/$alcesnetwork::profile/zones.erb",
-	"alcesnetwork/firewall/generic/zones.erb"),
+	"alcesnetwork/dynamic/firewall/$alcesnetwork::profile/zones.erb",
+	"alcesnetwork/dynamic/firewall/generic/zones.erb"),
       require=>Package['shorewall'],
     }
   }
