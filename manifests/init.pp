@@ -101,6 +101,10 @@ class alcesnetwork (
     primary_role => hiera("alcesnetwork::primary_role",'private'),
 
     extra_networks => hiera("alcesnetwork::extra_networks",[]),
+
+    dnsnetworks => hiera("alcesnetwork::dnsnetworks",[]),
+    dnssearchdomains => hiera("alcesnetwork::dnssearchdomains",[$alcesnetwork::network::private_domain,$alces_network::management_domain,$alces_network::secure_domain,$alces_network::infiniband_domain]),
+    forwarddns => hiera("alcesnetwork::forwarddns",[]),
   }
 
   #Configure firewall

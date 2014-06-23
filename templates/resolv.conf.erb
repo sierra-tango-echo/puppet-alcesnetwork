@@ -1,0 +1,2 @@
+search <%=scope.lookupvar('alcesnetwork::network::primary_domain')%><% unless scope.lookupvar('alcesnetwork::network::dnssearchdomains').empty?%> <%=scope.lookupvar('alcesnetwork::network::dnssearchdomains').collect{|x| "#{x}"}.join(" ")%><%end%>
+nameserver <%=scope.lookupvar('alcesbase::master_ip')%>

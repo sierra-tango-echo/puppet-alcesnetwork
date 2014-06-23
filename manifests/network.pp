@@ -76,6 +76,10 @@ class alcesnetwork::network (
   $primary_role,
 
   $extra_networks,
+
+  $dnsnetworks,
+  $dnssearchdomains,
+  $forwarddns,
 )
 {
   #Lookup ip's
@@ -90,7 +94,7 @@ class alcesnetwork::network (
   #Set primary domain vars
   $primary_netmask = inline_template("<%=scope.lookupvar(\"#{@primary_role}_netmask\")%>")
   $primary_network = inline_template("<%=scope.lookupvar(\"#{@primary_role}_network\")%>")
-  $primary_gatewway = inline_template("<%=scope.lookupvar(\"#{@primary_role}_gateway\")%>")
+  $primary_gateway = inline_template("<%=scope.lookupvar(\"#{@primary_role}_gateway\")%>")
   $primary_dhcp = inline_template("<%=scope.lookupvar(\"#{@primary_role}_dhcp\")%>")
   $primary_domain = inline_template("<%=scope.lookupvar(\"#{@primary_role}_domain\")%>")
   $primary_dns = inline_template("<%=scope.lookupvar(\"#{@primary_role}_dns\")%>")
@@ -127,5 +131,14 @@ class alcesnetwork::network (
       content=>'',
       replace=>no,
    }
+
+   #resolv.conf
+   file {'/etc/resolv.conf':
+      ensure=>present,
+      mode=>0644,
+      owner=>'root',
+      group=>'root',
+      content=>template("alcesnetwork/resolv.conf.erb"),
+    }
 
 }
