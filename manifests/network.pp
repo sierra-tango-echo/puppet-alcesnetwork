@@ -80,6 +80,10 @@ class alcesnetwork::network (
   $dnsnetworks,
   $dnssearchdomains,
   $forwarddns,
+
+  $externaldnsname,
+
+  $destructive=$alcesnetwork::destructive,
 )
 {
   #Lookup ip's
@@ -101,44 +105,44 @@ class alcesnetwork::network (
   $primary_interface = inline_template("<%=scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera([\"alcesnetwork::networkrole_#{i}\"]) rescue '') == scope.lookupvar('primary_role')}.compact.first%>")
 
   #NETWORK INTERFACES
-
-  alcesnetwork::network_interface { $interfaces:
-    require=>Service['NetworkManager']
-  }
-  file {'/etc/modprobe.d/alces-bonding.conf':
-    ensure=>present,
-    mode=>0644,
-    owner=>'root',
-    group=>'root',
-    content=>template('alcesnetwork/network_interface/el6/alces-bonding.conf'),
-  }
-  service {'NetworkManager':,
-    enable=>false,
-    ensure=>stopped
-  }
-  file {'/etc/sysconfig/network':
-    ensure=>present,
-    mode=>0644,
-    owner=>'root',
-    group=>'root',
-    content=>template('alcesnetwork/network/sysconfig-network.erb')
-  }
-  file {'/etc/sysconfig/static-routes':
+  if $destructive {
+    alcesnetwork::network_interface { $interfaces:
+      require=>Service['NetworkManager']
+    }
+    file {'/etc/modprobe.d/alces-bonding.conf':
+      ensure=>present,
+      mode=>0644,
+      owner=>'root',
+      group=>'root',
+      content=>template('alcesnetwork/network_interface/el6/alces-bonding.conf'),
+    }
+    service {'NetworkManager':,
+      enable=>false,
+      ensure=>stopped
+    }
+    file {'/etc/sysconfig/network':
+      ensure=>present,
+      mode=>0644,
+      owner=>'root',
+      group=>'root',
+      content=>template('alcesnetwork/network/sysconfig-network.erb')
+    }
+    file {'/etc/sysconfig/static-routes':
       ensure=>present,
       mode=>0644,
       owner=>root,
       group=>root,
       content=>'',
       replace=>no,
-   }
+     }
 
-   #resolv.conf
-   file {'/etc/resolv.conf':
+     #resolv.conf
+     file {'/etc/resolv.conf':
       ensure=>present,
       mode=>0644,
       owner=>'root',
       group=>'root',
       content=>template("alcesnetwork/resolv.conf.erb"),
-    }
-
+     }
+  }
 }

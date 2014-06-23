@@ -15,6 +15,8 @@ class alcesnetwork (
   # - slave
   # - master
   $role = hiera('alcesbase::role','slave'),
+  #Be more destructive
+  $destructive
 )
 {
   class { 'alcesnetwork::network':
@@ -105,6 +107,8 @@ class alcesnetwork (
     dnsnetworks => hiera("alcesnetwork::dnsnetworks",[]),
     dnssearchdomains => hiera("alcesnetwork::dnssearchdomains",[$alcesnetwork::network::private_domain,$alces_network::management_domain,$alces_network::secure_domain,$alces_network::infiniband_domain]),
     forwarddns => hiera("alcesnetwork::forwarddns",[]),
+
+    externaldnsname => hiera("alcesnetwork::externaldnsname",undef)
   }
 
   #Configure firewall
