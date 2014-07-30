@@ -99,7 +99,7 @@ class alcesnetwork::network (
   $primary_netmask = inline_template("<%=scope.lookupvar(\"#{@primary_role}_netmask\")%>")
   $primary_network = inline_template("<%=scope.lookupvar(\"#{@primary_role}_network\")%>")
   $primary_gateway = inline_template("<%=scope.lookupvar(\"#{@primary_role}_gateway\")%>")
-  $primary_dhcp = inline_template("<%=scope.lookupvar(\"#{@primary_role}_dhcp\")%>")
+  $primary_dhcp = str2bool(inline_template("<%=scope.lookupvar(\"#{@primary_role}_dhcp\")%>"))
   $primary_domain = inline_template("<%=scope.lookupvar(\"#{@primary_role}_domain\")%>")
   $primary_dns = inline_template("<%=scope.lookupvar(\"#{@primary_role}_dns\")%>")
   $primary_interface = inline_template("<%=scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera([\"alcesnetwork::networkrole_#{i}\"]) rescue '') == scope.lookupvar('primary_role')}.compact.first%>")
@@ -120,13 +120,21 @@ class alcesnetwork::network (
       enable=>false,
       ensure=>stopped
     }
-    file {'/etc/sysconfig/network':
-      ensure=>present,
-      mode=>0644,
-      owner=>'root',
-      group=>'root',
-      content=>template('alcesnetwork/network/sysconfig-network.erb')
+    if ! $primary_dhcp {
+      augeas {'sysconfignetwork-hostname':
+        context => "/files/etc/sysconfig/network",
+        changes => "set HOSTNAME $::alces_hostname.$primary_domain",
+      }
     }
+    augeas {'sysconfignetwork-networking':
+      context => "/files/etc/sysconfig/network",
+      changes => "set NETWORKING yes",
+    }
+    augeas {'sysconfignetwork-networking-ipv6':
+      context => "/files/etc/sysconfig/network",
+      changes => "set NETWORKING_IPV6 no",
+    }
+
     file {'/etc/sysconfig/static-routes':
       ensure=>present,
       mode=>0644,

@@ -1,3 +1,0 @@
-NETWORKING=yes
-NETWORKING_IPV6=no
-<% if @primary_dhcp.to_s != "false"  %>#<%end%>HOSTNAME=<%=scope.lookupvar("::alces_hostname")%>.<%=@primary_domain%>

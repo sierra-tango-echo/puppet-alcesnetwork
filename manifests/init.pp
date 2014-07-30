@@ -111,8 +111,31 @@ class alcesnetwork (
     externaldnsname => hiera("alcesnetwork::externaldnsname",undef)
   }
 
+
+  #determine if firewall is required (can be hiera overriden)
+  case $profile {
+    'headnode': {
+      $firewall=true
+    }
+    'login': {
+      $firewall=true
+    }
+    'service': {
+      $firewall=true
+    }
+    default: {
+      $firewall=false
+    }
+  }
   #Configure firewall
   class { 'alcesnetwork::firewall':
+    firewall=>hiera("alcesnetwork::firewall",$firewall)
+  }
 
+  class { 'alcesnetwork::infiniband':
+    rdma=>hiera("alcesnetwork::infiniband",false),
+    qlogic=>hiera("alcesnetwork::qlogic",false),
+    melanox=>hiera("alcesnetwork::melanox",true),
+    lustre=>hiera("alceshpc::lustre",false)
   }
 }

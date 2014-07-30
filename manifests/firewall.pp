@@ -5,11 +5,12 @@
 ##
 ################################################################################
 class alcesnetwork::firewall (
+  $firewall,
   $shorewall=true,
 )
 {
   #FIXME support roles rather than defined templates for different networks
-
+  if $firewall {
   if $shorewall {
 
     $man_interface=inline_template("<%=scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera([\"alcesnetwork::networkrole_#{i}\"]) rescue raise) == 'management'}.compact.first%>")
@@ -95,5 +96,6 @@ class alcesnetwork::firewall (
 	"alcesnetwork/dynamic/firewall/generic/zones.erb"),
       require=>Package['shorewall'],
     }
+  }
   }
 }
