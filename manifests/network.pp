@@ -101,7 +101,7 @@ class alcesnetwork::network (
   $primary_gateway = inline_template("<%=scope.lookupvar(\"#{@primary_role}_gateway\")%>")
   $primary_dhcp = str2bool(inline_template("<%=scope.lookupvar(\"#{@primary_role}_dhcp\")%>"))
   $primary_domain = inline_template("<%=scope.lookupvar(\"#{@primary_role}_domain\")%>")
-  $primary_dns = inline_template("<%=scope.lookupvar(\"#{@primary_role}_dns\")%>")
+  $primary_dns = any2array(inline_template("<%=scope.lookupvar(\"#{@primary_role}_dns\")%>"))
   $primary_interface = inline_template("<%=scope.lookupvar('alcesnetwork::network::interfaces').select {|i| (scope.function_hiera([\"alcesnetwork::networkrole_#{i}\"]) rescue '') == scope.lookupvar('primary_role')}.compact.first%>")
 
   #NETWORK INTERFACES
